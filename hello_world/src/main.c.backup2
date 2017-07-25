@@ -1,0 +1,29 @@
+#define STM32F10X_LD
+
+#include <stm32f10x.h>
+
+void delay()
+{
+	int i = 100000;
+	while (i-- >0)
+		asm("nop");
+}
+
+int main(void)
+{
+	int n = 0;
+
+	RCC->APB2ENR |= 0x10 | 0x04;
+	GPIOC->CRH = 0x11;
+
+	while (1)
+	{
+		delay();
+		++n;
+
+		if (n & 1)
+			GPIOC->BSRR = 1 << 8;
+		else
+			GPIOC->BSRR = 1 << 24;
+	}
+}

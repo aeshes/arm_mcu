@@ -1,0 +1,29 @@
+
+#define RCC_BASE 0x40021000
+#define RCC_APB2ENR (RCC_BASE + 0x018)
+#define GPIOC_BASE 0x40011000
+#define GPIOC_CRL GPIOC_BASE
+#define GPIOC_ODR (GPIOC_BASE + 0x0C)
+
+void wait()
+{
+	volatile int i = 0x200000;
+	while (i > 0) --i;
+}
+
+void main()
+{
+	*((volatile unsigned long *)RCC_APB2ENR) = 1 << 4;
+
+	volatile unsigned long i = 0;
+	++i; ++i; ++i;
+	i = 0;
+
+	*((volatile unsigned long *)GPIOC_CRL) |= 0x1;
+
+	while (1)
+	{
+		*((volatile unsigned long *)GPIOC_ODR) ^= 0xFFFF;
+		wait();
+	}
+}
